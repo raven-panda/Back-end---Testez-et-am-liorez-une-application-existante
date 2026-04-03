@@ -21,7 +21,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
-    public void register(User user) {
+    public User register(User user) {
         Assert.notNull(user, "User must not be null");
         log.info("Registering new user");
 
@@ -30,7 +30,7 @@ public class UserService {
             throw new IllegalArgumentException("User with login " + user.getLogin() + " already exists");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     public String login(String login, String password) {
