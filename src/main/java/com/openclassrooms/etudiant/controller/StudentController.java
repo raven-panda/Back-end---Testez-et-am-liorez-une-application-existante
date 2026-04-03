@@ -1,12 +1,14 @@
 package com.openclassrooms.etudiant.controller;
 
+import com.openclassrooms.etudiant.dto.StudentCreateDto;
+import com.openclassrooms.etudiant.dto.StudentDto;
 import com.openclassrooms.etudiant.dto.UserDto;
-import com.openclassrooms.etudiant.mapper.UserDtoMapper;
-import com.openclassrooms.etudiant.service.UserService;
+import com.openclassrooms.etudiant.entities.Student;
+import com.openclassrooms.etudiant.mapper.StudentDtoMapper;
+import com.openclassrooms.etudiant.service.StudentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,32 +18,34 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StudentController {
 
-    private final UserService userService;
-    private final UserDtoMapper userDtoMapper;
+    private final StudentService studentService;
+    private final StudentDtoMapper studentDtoMapper;
 
     @GetMapping()
-    private ResponseEntity<List<UserDto>> getAllStudent() {
-        return ResponseEntity.ok(List.of(new UserDto()));
+    private ResponseEntity<List<StudentDto>> getAllStudent() {
+        return ResponseEntity.ok(List.of(new StudentDto()));
     }
 
     @GetMapping("/{id:long}")
-    private ResponseEntity<UserDto> getStudentById(@PathVariable Long id) {
-        return ResponseEntity.ok(new UserDto());
+    private ResponseEntity<StudentDto> getStudentById(@PathVariable Long id) {
+        return ResponseEntity.ok(new StudentDto());
     }
 
     @PostMapping()
-    private ResponseEntity<UserDto> createStudent(@Valid @RequestBody UserDto user) {
-        return ResponseEntity.ok(new UserDto());
+    private ResponseEntity<StudentDto> createStudent(@Valid @RequestBody StudentCreateDto studentCreateDto) {
+        Student studentEntity = studentDtoMapper.toEntity(studentCreateDto);
+        Student registeredStudent = studentService.createStudent(studentEntity);
+        return ResponseEntity.ok(studentDtoMapper.toDto(registeredStudent));
     }
 
     @PutMapping("/{id:long}")
-    private ResponseEntity<UserDto> updateStudent(@PathVariable Long id, @Valid @RequestBody UserDto user) {
-        return ResponseEntity.ok(new UserDto());
+    private ResponseEntity<StudentDto> updateStudent(@PathVariable Long id, @Valid @RequestBody UserDto user) {
+        return ResponseEntity.ok(new StudentDto());
     }
 
     @DeleteMapping("/{id:long}")
-    private ResponseEntity<UserDto> deleteStudent(@PathVariable Long id) {
-        return ResponseEntity.ok(new UserDto());
+    private ResponseEntity<StudentDto> deleteStudent(@PathVariable Long id) {
+        return ResponseEntity.ok(new StudentDto());
     }
 
 }
