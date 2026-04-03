@@ -2,8 +2,12 @@ package com.openclassrooms.etudiant.handler;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -12,16 +16,44 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 
 @RestControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
+
+    @Override
+    @NonNull
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+        @NonNull MethodArgumentNotValidException ex,
+        @NonNull HttpHeaders headers,
+        @NonNull HttpStatusCode status,
+        @NonNull WebRequest request) {
+
+        Map<String, String> errors = new LinkedHashMap<>();
+
+        for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
+            errors.put(fieldError.getField(), fieldError.getDefaultMessage());
+        }
+
+        ValidationErrorDetails body = new ValidationErrorDetails(
+            LocalDateTime.now(),
+            "Validation failed",
+            request.getDescription(false),
+            errors
+        );
+
+        return handleExceptionInternal(ex, body, headers, HttpStatus.BAD_REQUEST, request);
+    }
+
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = {IllegalArgumentException.class, IllegalStateException.class})
     protected ResponseEntity<Object> handleConflict(RuntimeException runtimeException, WebRequest request) {
         logError(runtimeException);
         return handleExceptionInternal(runtimeException, getErrorDetails(runtimeException, request), new HttpHeaders(),
-                HttpStatus.BAD_REQUEST, request);
+            HttpStatus.BAD_REQUEST, request);
     }
 
 
@@ -31,7 +63,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                                                                    WebRequest request) {
         logError(badCredentialsException);
         return handleExceptionInternal(badCredentialsException, getErrorDetails(badCredentialsException, request),
-                new HttpHeaders(), HttpStatus.UNAUTHORIZED, request);
+            new HttpHeaders(), HttpStatus.UNAUTHORIZED, request);
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
@@ -40,7 +72,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                                                               WebRequest request) {
         logError(accessDeniedException);
         return handleExceptionInternal(accessDeniedException, getErrorDetails(accessDeniedException, request),
-                new HttpHeaders(), HttpStatus.FORBIDDEN, request);
+            new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
 
 
@@ -49,7 +81,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleException(RuntimeException runtimeException, WebRequest request) {
         logError(runtimeException);
         return handleExceptionInternal(runtimeException, "Internal Server error", new HttpHeaders(),
-                HttpStatus.INTERNAL_SERVER_ERROR, request);
+            HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 
     private void logError(Exception exception) {
