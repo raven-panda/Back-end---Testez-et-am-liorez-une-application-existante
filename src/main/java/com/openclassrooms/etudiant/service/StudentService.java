@@ -56,5 +56,6 @@ public class StudentService {
         log.info("Deleting student with id {}", id);
         Student student = getStudentById(id);
         studentRepository.delete(student);
+        userService.deleteUser(student.getUser().getId());
     }
 }

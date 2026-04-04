@@ -50,6 +50,12 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
+    public void deleteUser(Long id) {
+        log.info("Deleting user with id {}", id);
+        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User with id " + id + " not found"));
+        userRepository.delete(user);
+    }
+
     public String login(String login, String password) {
         Assert.notNull(login, "Login must not be null");
         Assert.notNull(password, "Password must not be null");
