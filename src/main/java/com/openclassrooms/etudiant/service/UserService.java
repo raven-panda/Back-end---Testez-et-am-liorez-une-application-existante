@@ -36,6 +36,8 @@ public class UserService {
     public User updateUser(User user) {
         Assert.notNull(user, "User must not be null");
         Assert.notNull(user.getId(), "User id must not be null");
+
+        Assert.notNull(user.getId(), "User id must not be null");
         log.info("Updating user with id {}", user.getId());
 
         Optional<User> optionalUser = userRepository.findById(user.getId());
@@ -51,6 +53,7 @@ public class UserService {
     }
 
     public void deleteUser(Long id) {
+        Assert.notNull(id, "User id must not be null");
         log.info("Deleting user with id {}", id);
         User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User with id " + id + " not found"));
         userRepository.delete(user);

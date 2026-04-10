@@ -35,6 +35,11 @@ public class StudentService {
     }
 
     public Student createStudent(Student student) {
+        Assert.notNull(student, "Student must not be null");
+        Assert.notNull(student.getUser(), "Student user must not be null");
+
+        log.info("Registering new student");
+
         User createdUser = userService.register(student.getUser());
         student.setUser(createdUser);
         return studentRepository.save(student);
@@ -43,6 +48,8 @@ public class StudentService {
     public Student updateStudent(Student student) {
         Assert.notNull(student, "Student must not be null");
         Assert.notNull(student.getId(), "Student id must not be null");
+        Assert.notNull(student.getUser(), "Student user must not be null");
+        Assert.notNull(student.getUser().getId(), "Student user id must not be null");
         log.info("Updating student with id {}", student.getId());
 
         Student existingStudent = getStudentById(student.getId());
