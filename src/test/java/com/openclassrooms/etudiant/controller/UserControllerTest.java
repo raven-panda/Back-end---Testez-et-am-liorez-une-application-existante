@@ -1,6 +1,7 @@
 package com.openclassrooms.etudiant.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.openclassrooms.etudiant.dto.LoginRequestDTO;
 import com.openclassrooms.etudiant.dto.RegisterDTO;
 import com.openclassrooms.etudiant.entities.User;
 import com.openclassrooms.etudiant.repository.UserRepository;
@@ -27,7 +28,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 @Testcontainers
 public class UserControllerTest {
 
-    private static final String URL = "/api/register";
+    private static final String REGISTER_URL = "/api/register";
+    private static final String LOGIN_URL = "/api/login";
     private static final String FIRST_NAME = "John";
     private static final String LAST_NAME = "Doe";
     private static final String LOGIN = "login";
@@ -66,12 +68,12 @@ public class UserControllerTest {
         RegisterDTO registerDTO = new RegisterDTO();
 
         // WHEN
-        mockMvc.perform(MockMvcRequestBuilders.post(URL)
-                        .content(objectMapper.writeValueAsString(registerDTO))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        mockMvc.perform(MockMvcRequestBuilders.post(REGISTER_URL)
+                .content(objectMapper.writeValueAsString(registerDTO))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test
@@ -91,12 +93,12 @@ public class UserControllerTest {
         registerDTO.setPassword(PASSWORD);
 
         // WHEN
-        mockMvc.perform(MockMvcRequestBuilders.post(URL)
-                        .content(objectMapper.writeValueAsString(registerDTO))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        mockMvc.perform(MockMvcRequestBuilders.post(REGISTER_URL)
+                .content(objectMapper.writeValueAsString(registerDTO))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test
@@ -109,11 +111,98 @@ public class UserControllerTest {
         registerDTO.setPassword(PASSWORD);
 
         // WHEN
-        mockMvc.perform(MockMvcRequestBuilders.post(URL)
-                        .content(objectMapper.writeValueAsString(registerDTO))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(MockMvcResultMatchers.status().isCreated());
+        mockMvc.perform(MockMvcRequestBuilders.post(REGISTER_URL)
+                .content(objectMapper.writeValueAsString(registerDTO))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(MockMvcResultMatchers.status().isCreated());
+    }
+
+    @Test
+    public void loginUserWithoutRequiredData() throws Exception {
+        // GIVEN
+        LoginRequestDTO loginDto = new LoginRequestDTO();
+
+        // WHEN
+        mockMvc.perform(MockMvcRequestBuilders.post(LOGIN_URL)
+                .content(objectMapper.writeValueAsString(loginDto))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    public void loginUserWithUnusedLogin() throws Exception {
+        // GIVEN
+        User registeredUser = new User();
+        registeredUser.setFirstName(FIRST_NAME);
+        registeredUser.setLastName(LAST_NAME);
+        registeredUser.setLogin(LOGIN);
+        registeredUser.setPassword(PASSWORD);
+        userService.register(registeredUser);
+
+        String fakeLogin = "fakeLogin@example.com";
+        LoginRequestDTO loginDto = new LoginRequestDTO();
+        loginDto.setLogin(fakeLogin);
+        loginDto.setPassword(PASSWORD);
+
+        // WHEN
+        mockMvc.perform(MockMvcRequestBuilders.post(LOGIN_URL)
+                .content(objectMapper.writeValueAsString(loginDto))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    public void loginUserWithBadPassword() throws Exception {
+        // GIVEN
+        User registeredUser = new User();
+        registeredUser.setFirstName(FIRST_NAME);
+        registeredUser.setLastName(LAST_NAME);
+        registeredUser.setLogin(LOGIN);
+        registeredUser.setPassword(PASSWORD);
+        userService.register(registeredUser);
+
+        String badPassword = "fakePasswordSecure";
+        LoginRequestDTO loginDto = new LoginRequestDTO();
+        loginDto.setLogin(LOGIN);
+        loginDto.setPassword(badPassword);
+
+        // WHEN
+        mockMvc.perform(MockMvcRequestBuilders.post(LOGIN_URL)
+                .content(objectMapper.writeValueAsString(loginDto))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    public void loginUserSuccessful() throws Exception {
+        // GIVEN
+        User registeredUser = new User();
+        registeredUser.setFirstName(FIRST_NAME);
+        registeredUser.setLastName(LAST_NAME);
+        registeredUser.setLogin(LOGIN);
+        registeredUser.setPassword(PASSWORD);
+        userService.register(registeredUser);
+
+        LoginRequestDTO loginDto = new LoginRequestDTO();
+        loginDto.setLogin(LOGIN);
+        loginDto.setPassword(PASSWORD);
+
+        // WHEN
+        mockMvc.perform(MockMvcRequestBuilders.post(LOGIN_URL)
+                .content(objectMapper.writeValueAsString(loginDto))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.token").isString())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.token").isNotEmpty());
     }
 }
