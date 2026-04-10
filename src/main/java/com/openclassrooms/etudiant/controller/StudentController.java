@@ -37,7 +37,9 @@ public class StudentController {
 
     @GetMapping("/{id}")
     private ResponseEntity<StudentDto> getStudentById(@PathVariable Long id) {
-        return ResponseEntity.ok(studentDtoMapper.toDto(studentService.getStudentById(id)));
+        return studentService.getStudentByIdOptional(id)
+            .map(student -> ResponseEntity.ok(studentDtoMapper.toDto(student)))
+            .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping()

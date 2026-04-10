@@ -24,8 +24,12 @@ public class StudentService {
         return studentRepository.findAll();
     }
 
+    public Optional<Student> getStudentByIdOptional(Long id) {
+        return studentRepository.findById(id);
+    }
+
     public Student getStudentById(Long id) {
-        Optional<Student> optionalStudent = studentRepository.findById(id);
+        Optional<Student> optionalStudent = getStudentByIdOptional(id);
 
         if (optionalStudent.isEmpty()) {
             throw new IllegalArgumentException("Student with id " + id + " not found");
