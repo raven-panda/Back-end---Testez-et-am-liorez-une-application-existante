@@ -1,0 +1,252 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > StudentDtoMapperImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.openclassrooms.etudiant.mapper</a>
+</div>
+
+<h1>Coverage Summary for Class: StudentDtoMapperImpl (com.openclassrooms.etudiant.mapper)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">StudentDtoMapperImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (10/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    55%
+  </span>
+  <span class="absValue">
+    (11/20)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    83,6%
+  </span>
+  <span class="absValue">
+    (46/55)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.openclassrooms.etudiant.mapper;
+&nbsp;
+&nbsp;import com.openclassrooms.etudiant.dto.RegisterDTO;
+&nbsp;import com.openclassrooms.etudiant.dto.StudentCreateDto;
+&nbsp;import com.openclassrooms.etudiant.dto.StudentDto;
+&nbsp;import com.openclassrooms.etudiant.dto.StudentUpdateDto;
+&nbsp;import com.openclassrooms.etudiant.dto.UserDto;
+&nbsp;import com.openclassrooms.etudiant.entities.Student;
+&nbsp;import com.openclassrooms.etudiant.entities.User;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import javax.annotation.processing.Generated;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;
+&nbsp;@Generated(
+&nbsp;    value = &quot;org.mapstruct.ap.MappingProcessor&quot;,
+&nbsp;    date = &quot;2026-04-10T10:54:26+0200&quot;,
+&nbsp;    comments = &quot;version: 1.6.3, compiler: javac, environment: Java 21.0.10 (Oracle Corporation)&quot;
+&nbsp;)
+&nbsp;@Component
+<b class="fc">&nbsp;public class StudentDtoMapperImpl implements StudentDtoMapper {</b>
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public StudentDto toDto(Student student) {
+<b class="pc">&nbsp;        if ( student == null ) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        StudentDto studentDto = new StudentDto();</b>
+&nbsp;
+<b class="fc">&nbsp;        studentDto.setUserId( studentUserId( student ) );</b>
+<b class="fc">&nbsp;        studentDto.setFirstName( studentUserFirstName( student ) );</b>
+<b class="fc">&nbsp;        studentDto.setLastName( studentUserLastName( student ) );</b>
+<b class="fc">&nbsp;        studentDto.setCreatedAt( student.getCreated_at() );</b>
+<b class="fc">&nbsp;        studentDto.setUpdatedAt( student.getUpdated_at() );</b>
+<b class="fc">&nbsp;        studentDto.setId( student.getId() );</b>
+&nbsp;
+<b class="fc">&nbsp;        return studentDto;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;StudentDto&gt; toDto(List&lt;Student&gt; student) {
+<b class="pc">&nbsp;        if ( student == null ) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        List&lt;StudentDto&gt; list = new ArrayList&lt;StudentDto&gt;( student.size() );</b>
+<b class="fc">&nbsp;        for ( Student student1 : student ) {</b>
+<b class="fc">&nbsp;            list.add( toDto( student1 ) );</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return list;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Student toEntity(StudentCreateDto dto) {
+<b class="pc">&nbsp;        if ( dto == null ) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Student student = new Student();</b>
+&nbsp;
+<b class="fc">&nbsp;        student.setUser( toEntity( dto.getUser() ) );</b>
+&nbsp;
+<b class="fc">&nbsp;        return student;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Student toEntity(StudentUpdateDto dto) {
+<b class="pc">&nbsp;        if ( dto == null ) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Student student = new Student();</b>
+&nbsp;
+<b class="fc">&nbsp;        student.setId( dto.getId() );</b>
+<b class="fc">&nbsp;        student.setUser( toEntity( dto.getUser() ) );</b>
+&nbsp;
+<b class="fc">&nbsp;        return student;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public User toEntity(RegisterDTO user) {
+<b class="pc">&nbsp;        if ( user == null ) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        User user1 = new User();</b>
+&nbsp;
+<b class="fc">&nbsp;        user1.setFirstName( user.getFirstName() );</b>
+<b class="fc">&nbsp;        user1.setLastName( user.getLastName() );</b>
+<b class="fc">&nbsp;        user1.setLogin( user.getLogin() );</b>
+<b class="fc">&nbsp;        user1.setPassword( user.getPassword() );</b>
+&nbsp;
+<b class="fc">&nbsp;        return user1;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public User toEntity(UserDto user) {
+<b class="pc">&nbsp;        if ( user == null ) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        User user1 = new User();</b>
+&nbsp;
+<b class="fc">&nbsp;        user1.setId( user.getId() );</b>
+<b class="fc">&nbsp;        user1.setFirstName( user.getFirstName() );</b>
+<b class="fc">&nbsp;        user1.setLastName( user.getLastName() );</b>
+&nbsp;
+<b class="fc">&nbsp;        return user1;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private Long studentUserId(Student student) {
+<b class="fc">&nbsp;        User user = student.getUser();</b>
+<b class="pc">&nbsp;        if ( user == null ) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return user.getId();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private String studentUserFirstName(Student student) {
+<b class="fc">&nbsp;        User user = student.getUser();</b>
+<b class="pc">&nbsp;        if ( user == null ) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return user.getFirstName();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private String studentUserLastName(Student student) {
+<b class="fc">&nbsp;        User user = student.getUser();</b>
+<b class="pc">&nbsp;        if ( user == null ) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return user.getLastName();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-04-17 11:48</div>
+</div>
+</body>
+</html>

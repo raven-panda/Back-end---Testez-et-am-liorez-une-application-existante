@@ -1,0 +1,192 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > SpringSecurityConfig</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.openclassrooms.etudiant.configuration.security</a>
+</div>
+
+<h1>Coverage Summary for Class: SpringSecurityConfig (com.openclassrooms.etudiant.configuration.security)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SpringSecurityConfig</td>
+<td class="coverageStat">
+  <span class="percent">
+    87,5%
+  </span>
+  <span class="absValue">
+    (7/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    95,2%
+  </span>
+  <span class="absValue">
+    (20/21)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">SpringSecurityConfig$$SpringCGLIB$$0</td>
+  </tr>
+  <tr>
+    <td class="name">SpringSecurityConfig$$SpringCGLIB$$FastClass$$0</td>
+  </tr>
+  <tr>
+    <td class="name">SpringSecurityConfig$$SpringCGLIB$$FastClass$$1</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    87,5%
+  </span>
+  <span class="absValue">
+    (7/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    95,2%
+  </span>
+  <span class="absValue">
+    (20/21)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.openclassrooms.etudiant.configuration.security;
+&nbsp;
+&nbsp;import jakarta.servlet.http.HttpServletResponse;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.context.annotation.Bean;
+&nbsp;import org.springframework.context.annotation.Configuration;
+&nbsp;import org.springframework.security.authentication.AuthenticationManager;
+&nbsp;import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+&nbsp;import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+&nbsp;import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+&nbsp;import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+&nbsp;import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+&nbsp;import org.springframework.security.config.http.SessionCreationPolicy;
+&nbsp;import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+&nbsp;import org.springframework.security.crypto.password.PasswordEncoder;
+&nbsp;import org.springframework.security.web.SecurityFilterChain;
+&nbsp;import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+&nbsp;
+&nbsp;@Configuration
+&nbsp;@EnableWebSecurity
+<b class="fc">&nbsp;@RequiredArgsConstructor</b>
+&nbsp;public class SpringSecurityConfig {
+&nbsp;
+&nbsp;    private final CustomUserDetailService customUserDetailService;
+&nbsp;
+&nbsp;    @Bean
+&nbsp;    public JwtFilter authenticationJwtTokenFilter() {
+<b class="fc">&nbsp;        return new JwtFilter();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Bean
+&nbsp;    public DaoAuthenticationProvider authenticationProvider() {
+<b class="fc">&nbsp;        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();</b>
+<b class="fc">&nbsp;        authProvider.setUserDetailsService(customUserDetailService);</b>
+<b class="fc">&nbsp;        authProvider.setPasswordEncoder(passwordEncoder());</b>
+<b class="fc">&nbsp;        return authProvider;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Bean
+&nbsp;    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+<b class="fc">&nbsp;        return authConfig.getAuthenticationManager();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Bean
+&nbsp;    public PasswordEncoder passwordEncoder() {
+<b class="fc">&nbsp;        return new BCryptPasswordEncoder();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Bean
+&nbsp;    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+<b class="fc">&nbsp;        http</b>
+<b class="fc">&nbsp;            .cors(AbstractHttpConfigurer::disable)</b>
+<b class="fc">&nbsp;            .csrf(AbstractHttpConfigurer::disable)</b>
+<b class="fc">&nbsp;            .sessionManagement(management -&gt; management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))</b>
+<b class="fc">&nbsp;            .authenticationProvider(authenticationProvider())</b>
+<b class="fc">&nbsp;            .authorizeHttpRequests(authorize -&gt; authorize</b>
+&nbsp;                // No auth needed on :
+<b class="fc">&nbsp;                .requestMatchers(&quot;/actuator/**&quot;).permitAll()</b>
+<b class="fc">&nbsp;                .requestMatchers(&quot;/api/register&quot;, &quot;/api/login&quot;).permitAll()</b>
+&nbsp;                // Others protected routes will be added here.
+<b class="fc">&nbsp;                .anyRequest().authenticated()</b>
+&nbsp;            )
+<b class="fc">&nbsp;            .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)</b>
+<b class="fc">&nbsp;            .exceptionHandling(exceptionHandling -&gt; exceptionHandling.authenticationEntryPoint(</b>
+&nbsp;                (request, response, exception) -&gt; {
+<b class="nc">&nbsp;                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, exception.getMessage());</b>
+&nbsp;                }));
+&nbsp;
+<b class="fc">&nbsp;        return http.build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-04-17 11:48</div>
+</div>
+</body>
+</html>

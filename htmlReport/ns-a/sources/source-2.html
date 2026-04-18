@@ -1,0 +1,206 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > StudentService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.openclassrooms.etudiant.service</a>
+</div>
+
+<h1>Coverage Summary for Class: StudentService (com.openclassrooms.etudiant.service)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">StudentService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (26/26)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">StudentService$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (26/26)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.openclassrooms.etudiant.service;
+&nbsp;
+&nbsp;import com.openclassrooms.etudiant.entities.Student;
+&nbsp;import com.openclassrooms.etudiant.entities.User;
+&nbsp;import com.openclassrooms.etudiant.repository.StudentRepository;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.util.Assert;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@Service
+&nbsp;@Transactional
+<b class="fc">&nbsp;@RequiredArgsConstructor</b>
+&nbsp;public class StudentService {
+&nbsp;    private final StudentRepository studentRepository;
+&nbsp;    private final UserService userService;
+&nbsp;
+&nbsp;    public List&lt;Student&gt; getAllStudents() {
+<b class="fc">&nbsp;        return studentRepository.findAll();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Optional&lt;Student&gt; getStudentByIdOptional(Long id) {
+<b class="fc">&nbsp;        return studentRepository.findById(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Student getStudentById(Long id) {
+<b class="fc">&nbsp;        Optional&lt;Student&gt; optionalStudent = getStudentByIdOptional(id);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (optionalStudent.isEmpty()) {</b>
+<b class="fc">&nbsp;            throw new IllegalArgumentException(&quot;Student with id &quot; + id + &quot; not found&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return optionalStudent.get();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Student createStudent(Student student) {
+<b class="fc">&nbsp;        Assert.notNull(student, &quot;Student must not be null&quot;);</b>
+<b class="fc">&nbsp;        Assert.notNull(student.getUser(), &quot;Student user must not be null&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        log.info(&quot;Registering new student&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        User createdUser = userService.register(student.getUser());</b>
+<b class="fc">&nbsp;        student.setUser(createdUser);</b>
+<b class="fc">&nbsp;        return studentRepository.save(student);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Student updateStudent(Student student) {
+<b class="fc">&nbsp;        Assert.notNull(student, &quot;Student must not be null&quot;);</b>
+<b class="fc">&nbsp;        Assert.notNull(student.getId(), &quot;Student id must not be null&quot;);</b>
+<b class="fc">&nbsp;        Assert.notNull(student.getUser(), &quot;Student user must not be null&quot;);</b>
+<b class="fc">&nbsp;        Assert.notNull(student.getUser().getId(), &quot;Student user id must not be null&quot;);</b>
+<b class="fc">&nbsp;        log.info(&quot;Updating student with id {}&quot;, student.getId());</b>
+&nbsp;
+<b class="fc">&nbsp;        Student existingStudent = getStudentById(student.getId());</b>
+&nbsp;
+<b class="fc">&nbsp;        existingStudent.setUser(userService.updateUser(student.getUser()));</b>
+&nbsp;
+<b class="fc">&nbsp;        return studentRepository.save(existingStudent);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void deleteStudent(Long id) {
+<b class="fc">&nbsp;        log.info(&quot;Deleting student with id {}&quot;, id);</b>
+<b class="fc">&nbsp;        Student student = getStudentById(id);</b>
+<b class="fc">&nbsp;        studentRepository.delete(student);</b>
+<b class="fc">&nbsp;        userService.deleteUser(student.getUser().getId());</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-04-17 11:48</div>
+</div>
+</body>
+</html>

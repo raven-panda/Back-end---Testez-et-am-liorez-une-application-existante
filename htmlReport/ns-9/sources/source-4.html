@@ -1,0 +1,85 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > UserDtoMapper</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.openclassrooms.etudiant.mapper</a>
+</div>
+
+<h1>Coverage Summary for Class: UserDtoMapper (com.openclassrooms.etudiant.mapper)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">UserDtoMapper</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.openclassrooms.etudiant.mapper;
+&nbsp;
+&nbsp;import com.openclassrooms.etudiant.dto.RegisterDTO;
+&nbsp;import com.openclassrooms.etudiant.entities.User;
+&nbsp;import org.mapstruct.Mapper;
+&nbsp;import org.mapstruct.Mapping;
+&nbsp;import org.mapstruct.ReportingPolicy;
+&nbsp;
+&nbsp;@Mapper(componentModel = &quot;spring&quot;,
+&nbsp;        unmappedTargetPolicy = ReportingPolicy.ERROR)
+&nbsp;public interface UserDtoMapper {
+&nbsp;    @Mapping(target = &quot;id&quot;, ignore = true)
+&nbsp;    @Mapping(target = &quot;created_at&quot;, ignore = true)
+&nbsp;    @Mapping(target = &quot;updated_at&quot;, ignore = true)
+&nbsp;    @Mapping(target = &quot;authorities&quot;, ignore = true)
+&nbsp;    User toEntity(RegisterDTO registerDTO);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-04-17 11:48</div>
+</div>
+</body>
+</html>
